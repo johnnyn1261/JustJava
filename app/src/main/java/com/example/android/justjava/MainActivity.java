@@ -8,18 +8,20 @@
 
 package com.example.android.justjava;
 
-
-
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * This app displays an order form to order coffee.
  */
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     private int quantity;
 
     @Override
@@ -37,28 +39,41 @@ public class MainActivity extends AppCompatActivity {
         //display(quantity);
         //displayPrice(quantity * 5);
         //Toast.makeText(this, "Order Completed", Toast.LENGTH_SHORT).show();
-        int price = calculatePrice();
-        displayMessage(createOrderSummary(price));
+
+        CheckBox whippedCream = findViewById(R.id.whipped_cream_checkbox);
+        boolean hasWhippedCream = whippedCream.isChecked();
+
+        CheckBox chocolate = findViewById(R.id.chocolate_checkbox);
+        boolean hasChocolate = chocolate.isChecked();
+
+        //int price = calculatePrice();
+        displayMessage(createOrderSummary(hasWhippedCream, hasChocolate));
     }
 
     /**
      * Calculates the price of the order
      * @return total price
      */
-    private int calculatePrice() {
-        int price = quantity * 5;
-        return price;
+    private int calculatePrice(boolean hasWhippedCream, boolean hasChocolate) {
+        int price = 5;
+        price = hasWhippedCream ? price + 1 : price;
+        price = hasChocolate ? price + 2 : price;
+        return price * quantity;
     }
 
     /**
      * Create summary of order
-     * @param price of the order
+     * @param hasWhippedCream
+     * @param hasChocolate
      * @return text summary
      */
-    private String createOrderSummary(int price) {
-        String summary = "Name: Winkie Long Nguyen" +
+    private String createOrderSummary(boolean hasWhippedCream, boolean hasChocolate) {
+        EditText customerName = findViewById(R.id.customer_name);
+        String summary = "Name: " + customerName.getText().toString() +
+                "\nAdd Whipped Cream? " + hasWhippedCream + "" +
+                "\nAdd Chocolate? " + hasChocolate + "" +
                 "\nQuantity: " + quantity + "" +
-                "\nTotal: $" + price + "" +
+                "\nTotal: $" + calculatePrice(hasWhippedCream, hasChocolate) + "" +
                 "\nThank you!";
         return summary;
     }
@@ -67,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
      * This method displays the given quantity value on the screen.
      */
     private void display(int number) {
-        TextView quantityTextView = (TextView) findViewById(R.id.quantity_text_view);
+        TextView quantityTextView = findViewById(R.id.quantity_text_view);
         quantityTextView.setText("" + number);
     }
 
@@ -75,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
      * This method displays the give text on the screen
      */
     public void displayMessage(String message) {
-        TextView orderSummaryTextView = (TextView) findViewById(R.id.order_summary_text_view);
+        TextView orderSummaryTextView = findViewById(R.id.order_summary_text_view);
         orderSummaryTextView.setText(message);
     }
 
@@ -83,8 +98,12 @@ public class MainActivity extends AppCompatActivity {
      * This method is called when the + button is clicked.
      */
     public void increment(View view) {
-        quantity++;
-        display(quantity);
+        if (quantity < 99) {
+            quantity++;
+            display(quantity);
+        } else if (quantity == 99) {
+            Toast.makeText(this, "Dude, I think you've had enough...", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
