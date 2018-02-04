@@ -8,6 +8,8 @@
 
 package com.example.android.justjava;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -23,31 +25,37 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private int quantity;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         quantity = 0;
+        name = "";
     }
 
     /**
      * This method is called when the order button is clicked.
      */
     public void submitOrder(View view) {
-        //int quantity = 2;
-        //display(quantity);
-        //displayPrice(quantity * 5);
-        //Toast.makeText(this, "Order Completed", Toast.LENGTH_SHORT).show();
-
         CheckBox whippedCream = findViewById(R.id.whipped_cream_checkbox);
         boolean hasWhippedCream = whippedCream.isChecked();
-
         CheckBox chocolate = findViewById(R.id.chocolate_checkbox);
         boolean hasChocolate = chocolate.isChecked();
+        //displayMessage(createOrderSummary(hasWhippedCream, hasChocolate));
 
-        //int price = calculatePrice();
-        displayMessage(createOrderSummary(hasWhippedCream, hasChocolate));
+        EditText customerName = findViewById(R.id.customer_name);
+        name = customerName.getText().toString();
+
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        //intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Just Java order for " + name);
+        intent.putExtra(Intent.EXTRA_TEXT, createOrderSummary(hasWhippedCream, hasChocolate));
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 
     /**
@@ -68,8 +76,7 @@ public class MainActivity extends AppCompatActivity {
      * @return text summary
      */
     private String createOrderSummary(boolean hasWhippedCream, boolean hasChocolate) {
-        EditText customerName = findViewById(R.id.customer_name);
-        String summary = "Name: " + customerName.getText().toString() +
+        String summary = "Name: " + name +
                 "\nAdd Whipped Cream? " + hasWhippedCream + "" +
                 "\nAdd Chocolate? " + hasChocolate + "" +
                 "\nQuantity: " + quantity + "" +
@@ -86,13 +93,12 @@ public class MainActivity extends AppCompatActivity {
         quantityTextView.setText("" + number);
     }
 
-    /**
-     * This method displays the give text on the screen
-     */
+    /*
     public void displayMessage(String message) {
         TextView orderSummaryTextView = findViewById(R.id.order_summary_text_view);
         orderSummaryTextView.setText(message);
     }
+    */
 
     /**
      * This method is called when the + button is clicked.
