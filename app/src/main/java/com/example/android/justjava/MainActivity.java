@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:")); // only email apps should handle this
         //intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Just Java order for " + name);
+        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.order_for, name));
         intent.putExtra(Intent.EXTRA_TEXT, createOrderSummary(hasWhippedCream, hasChocolate));
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivity(intent);
@@ -76,12 +76,12 @@ public class MainActivity extends AppCompatActivity {
      * @return text summary
      */
     private String createOrderSummary(boolean hasWhippedCream, boolean hasChocolate) {
-        String summary = "Name: " + name +
-                "\nAdd Whipped Cream? " + hasWhippedCream + "" +
-                "\nAdd Chocolate? " + hasChocolate + "" +
-                "\nQuantity: " + quantity + "" +
-                "\nTotal: $" + calculatePrice(hasWhippedCream, hasChocolate) + "" +
-                "\nThank you!";
+        String summary = getString(R.string.name, name) +
+                "\n" + getString(R.string.add_w,hasWhippedCream) + "" +
+                "\n" + getString(R.string.add_c, hasChocolate) + "" +
+                "\n" + getString(R.string.quantity_message, quantity) + "" +
+                "\n" + getString(R.string.total, calculatePrice(hasWhippedCream, hasChocolate)) + "" +
+                "\n" + getString(R.string.thank_you);
         return summary;
     }
 
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             quantity++;
             display(quantity);
         } else if (quantity == 99) {
-            Toast.makeText(this, "Dude, I think you've had enough...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Dude, I think you have enough...", Toast.LENGTH_SHORT).show();
         }
     }
 
